@@ -95,20 +95,20 @@
 
 - What is Base Image?
   - Writing a dockerfile == Being given a computer with no OS and being told to install Chrome
-  - How do you install Chrome on a computer with no operation system?
-    step1. Install an operating system
-    step2. Start up your default browser
-    step3. Navigate to chrome.google.com
-    step4. Downlad installer
-    step5. Open file/folder explorer
-    step6. Execute chrome_installer.exe
-    step7. Execute chrome.exe
-  - Docker image 생성 단계로 비유하자면
-    step1은 specify a base image (alpine을 OS로 생각하면됨)
-    step2부터 step6단계는 run commands to install additional programs
-    step7은 command to run on startup
-  - Why did we use alpine as a base image?
-    -> Why do you use Windows, MacOS, or Ubuntu? -> They come with a preinstalled set of programs that are useful to you!
+  - How do you install Chrome on a computer with no operation system?<br />
+    step1. Install an operating system<br />
+    step2. Start up your default browser<br />
+    step3. Navigate to chrome.google.com<br />
+    step4. Downlad installer<br />
+    step5. Open file/folder explorer<br />
+    step6. Execute chrome_installer.exe<br />
+    step7. Execute chrome.exe<br />
+  - Docker image 생성 단계로 비유하자면<br />
+    step1은 specify a base image (alpine을 OS로 생각하면됨)<br />
+    step2부터 step6단계는 run commands to install additional programs<br />
+    step7은 command to run on startup<br />
+  - Why did we use alpine as a base image?<br />
+    -> Why do you use Windows, MacOS, or Ubuntu? -> They come with a preinstalled set of programs that are useful to you!<br />
     - We are trying to install, run redis and alpine base image has a set of program inside of it that are very useful for installing and running redis
 
 - The Build Process in Detail
