@@ -99,7 +99,7 @@
     step1. Install an operating system<br />
     step2. Start up your default browser<br />
     step3. Navigate to chrome.google.com<br />
-    step4. Downlad installer<br />
+    step4. Downlaod installer<br />
     step5. Open file/folder explorer<br />
     step6. Execute chrome_installer.exe<br />
     step7. Execute chrome.exe<br />
@@ -204,3 +204,36 @@
   COPY ./ ./
   ```
 
+- Docker Compose
+  - Separate CLI that gets installed along with Docker
+  - Used to start up multiple Docker containers at the same time and auomatically connect them together
+  - Automates some of the long-winded arguments we were passing to 'docker run'
+
+- Docker Compose Files
+  - docker compose 파일을 이용해서 아래와 같은 명령어들을
+  ```
+  docker build -t goongamja/visits:latest (node:alpine 실행)
+  docker run -p 8080:8080 goongamja/visits
+  ```
+  docker-compose.yml 파일하나에 작성해서 docker-cli에게 넘길것
+  ```
+  // docker-compose.yml
+  만들고자 하는 container:
+    redis-server
+      Make it using the 'redis' image
+    node-app
+      Make it using the Dockerfile in the current directory
+      Map port 8081 to 8081
+  ```
+  - 실제예시
+  ```
+  version: '3'
+  services: 
+    redis-server: 
+      image: 'redis'
+    node-app: 
+    # . -> look in the current directory for a Dockerfile and use that to build the image
+      build: .
+      ports:
+        - "4001:8081"
+  ```
