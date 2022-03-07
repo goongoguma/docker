@@ -3,6 +3,7 @@ services:
   redis-server: 
     image: 'redis'
   node-app: 
+    restart: on-failure
   # . -> look in the current directory for a Dockerfile and use that to build the image
     build: .
     ports:

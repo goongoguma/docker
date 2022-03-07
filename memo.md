@@ -121,7 +121,7 @@
   - 아래 명령어와 같이하면됨
   ```
   docker build -t goongamja/redis-test:latest .
-  // stephengrider -> 내 docker id
+  // goongamja -> 내 docker id
   // redis-test -> 내가 만든 repo 혹은 프로젝트의 이름
   // latest -> 버전 
   // . -> 빌드하기 위한 파일이나 폴더의 경로
@@ -237,3 +237,40 @@
       ports:
         - "4001:8081"
   ```
+
+- Docker compose command
+  - compose file에 있는 모든 container, image, service의 이미지를 만들기 위해서 docker-compose up 명령어를 사용한다.
+  - Dockerfile의 이미지를 다시 빌드하고 실행하기 위해서는 docker-compose up --build 명령어를 사용한다.
+  - docker-compose up으로 visits 프로젝트가 실행된다. 
+
+- Stopping Docker Compose Container
+  - Launch in background
+  ```
+  docker-compose up -d
+  ```
+  - Stop Containers
+  ```
+  docker-compose down
+  ```
+
+- Automatic Container Restarts
+  - docker compose가 container를 다시 시작하는 기준
+    - Restart Policies
+      - "no": Never attempt to restart this . contaienr if it stops or crashes
+      - always: If this container stops *for any reason* always attempt to restart it
+      - on-failure: Only restart if the container stops with an error code
+      - unless-stopped: Always restart unless we (the developers) forcibly stop it
+    ```
+    // 예시
+    version: '3'
+    services: 
+      redis-server: 
+        image: 'redis'
+      node-app: 
+        restart: always
+        build: .
+        ports:
+          - "4001:8081"
+    ```
+- Container Status with Docker Compose 
+  - docker-compose ps 명령어로 경로에 있는 compose파일의 container 상태를 확인할 수 있다.
