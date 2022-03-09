@@ -70,7 +70,7 @@
   // redis 서버가 돌아가는 container안에서 redis-cli 실행
   ex. docker exec -it f5cf02 redis-cli
   ```
-
+ 
 - Getting a command prompt in a container
   - container에서 명령어를 실행할 때마다 docker exec 명령어를 실행하는것은 너무 번거로움
   - sh 명령어를 사용해서 unix로 들어감
@@ -274,3 +274,72 @@
     ```
 - Container Status with Docker Compose 
   - docker-compose ps 명령어로 경로에 있는 compose파일의 container 상태를 확인할 수 있다.
+
+- Creating the Dev DockerFile
+  - 개발 버전을 위해 Dockerfile.dev를 설정하고
+  ```
+  FROM node:16-alpine
+
+  WORKDIR '/app'
+
+  COPY package.json .
+  RUN npm install
+
+  COPY . .
+
+  CMD ["npm", "run", "start"]
+  ```
+  docker build . 명령어를 실행했으나 Dockerfile을 찾을 수 없다는 에러가 발생한다.<br />
+  이럴때는 docker build -f Dockerfile.dev . 로 실행해야 한다. (f는 파일 설정)
+
+- Docker Volumes
+  - Dockerfile.dev를 빌드후에 docker run -p 3000:3000 id를 하게되면 프로젝트가 시작된다.
+  - 하지만 로컬 파일에서 파일이 변하더라도 해당 변화가 localhost:3000에 적용되지 않는다. 이 문제를 해결하기 위해 docker volumes를 사용할것.
+  - docker volumes를 사용해서 docker container가 로컬 폴더에 있는 경로들을 참조하게 만들것.
+  - 명령어가 조금 복잡하다.
+  ```
+  docker run -p 3000:3000 -v /app/node_modules -v$(pwd):/app <image_id>
+  ```
+  - 하지만 해당 명령어를 실행하면 react-scripts: not found 에러가 발생한다. 왜냐하면 명령어에 /app/node_modules를 뺐으니까...
+  - 해당 라인을 추가하고 아래의 명령어를 실행하면 프로젝트가 실행되고 수정사항이 실시간 반영되는것을 확인할 수 있다. 
+  ```
+  docker run -p 3000:3000 -v /app/node_modules  -v $(pwd):/app 17cf375c5bfcf60ce0baea05fee2bce85eb9b055d43104fe15c59068c8600276
+  ```
+- Shorthand with Docker Compose
+  - 하지만 명령어가 너무 길다. 
+  - docker-compose.yml 파일을 작성하자
+  ```
+  version: '3'
+  services:
+    web: 
+      build: .
+      ports: 
+        - "3000:3000"
+      volumes:
+        - /app/node_modules
+        # . -> outside folder
+        # /app -> inside container
+        - .:/app
+  ```
+  - docker-compose up을 해도 작동하지 않는다. 왜냐하면 현재 경로에 Dockerfile이 아닌 Dockerfile.dev 파일이 있기 때문이다.
+  - 그렇기 때문에 DOckerfile 대신 Dockerfile.dev 파일을 컴포즈할 방법을 찾아야 한다. 
+
+- Overriding Dockerfile Selection
+  - context와 dockerfile을 build 아래에 추가한다.
+  ```
+  version: '3'
+  services:
+    web: 
+      build:
+        # 현재 경로에서 Dockerfile.dev를 찾아 빌드
+        context: .
+        dockerfile: Dockerfile.dev
+      ports: 
+        - "3000:3000"
+      volumes:
+        - /app/node_modules
+        # . -> outside folder
+        # /app -> inside container
+        - .:/app
+
+  ```
