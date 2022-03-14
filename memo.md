@@ -299,9 +299,10 @@
   - docker volumes를 사용해서 docker container가 로컬 폴더에 있는 경로들을 참조하게 만들것.
   - 명령어가 조금 복잡하다.
   ```
+  // pwd -> present working directory
   docker run -p 3000:3000 -v /app/node_modules -v$(pwd):/app <image_id>
 
-  // /app/node_modules -> placeholder
+  // /app/node_modules -> placeholder (:가 없다면 container 밖에 참조할 내용이 없는것)
   // -v$(pwd):/app -> take everything inside working directory and map it up to the app folder inside of the container
   ```
   - 아래의 명령어를 실행하면 프로젝트가 실행되고 수정사항이 실시간 반영되는것을 확인할 수 있다. 
