@@ -16,7 +16,7 @@
   ```
   만들었던 모든 container 확인
   ```
-  docker ps --all
+  docker ps -a
   ```
 
 - Container lifecylcle
@@ -116,7 +116,7 @@
 
 - Taggin an Image
   - docker run <image id>
-  - 하지만 image를 실행할 때마다 id를 복붙하는 작업은 번거롭다
+  - 하지만 docker run을 실행할 때마다 id를 복붙하는 작업은 번거롭다
   - 그렇기에 image를 태그해서 docker run hello-world와 같이 이미지 실행을 간소화 할 수 있음
   - 아래 명령어와 같이하면됨
   ```
@@ -179,14 +179,14 @@
   - 로컬 컴퓨터에서 container안의 포트에 접속하기 위해서는 port mapping 작업이 필요함
   - 이 작업을 위해 container를 실행하는 docker run 명령어를 수정해야 함
   ```
-  docker run -p 5000:8080 <image id or name>
+  docker run -p 5000:8080 <container id or name>
   // 첫번째 8080 -> Route incoming requests to this port on local host to...
   // 두번째 8080 -> this port inside the container
   ```
 
 - Specifying a Working Directory
   - docker run -it goongamja/simpleweb sh를 이용해 container안으로 들어가 ls를 사용하면 해당 container안에 다양한 파일과 폴더들이 있는것을 알 수 있다.
-  - 이런점은 나중에 파일이나 폴더를 추가하였을때 같은 이름으로 생성할시 기존의 파일과 폴더이름이 충돌이 발생할 수 있는 확률이 있기때문에 바람직하지 않다. 그렇기에 WORKDIR 명령어를 추가한다
+  - 이런점은 나중에 파일이나 폴더를 추가하였을때 같은 이름으로 생성할시 기존의 파일과 폴더이름 충돌이 발생할 수 있는 확률이 있기때문에 바람직하지 않다. 그렇기에 WORKDIR 명령어를 추가한다.
   ```
   WORKDIR /usr/app
   // any following command will be executed relative to this path in the container
@@ -203,6 +203,7 @@
   RUN npm install
   COPY ./ ./
   ```
+  - 추가적으로 팁은 도커환경에서 앱을 실행 시킬때는 로컬환경에 있는 node_modules 파일은 지워도 된다. Dockerfile에서 npm install 시 자동적으로 node_modules가 생기기 때문에 로컬에 있는 node_modules는 삭제(빌드 COPY시 시간이 소요됨)
 
 - Docker Compose
   - Separate CLI that gets installed along with Docker
@@ -299,11 +300,13 @@
   - 명령어가 조금 복잡하다.
   ```
   docker run -p 3000:3000 -v /app/node_modules -v$(pwd):/app <image_id>
+
+  // /app/node_modules -> placeholder
+  // -v$(pwd):/app -> take everything inside working directory and map it up to the app folder inside of the container
   ```
-  - 하지만 해당 명령어를 실행하면 react-scripts: not found 에러가 발생한다. 왜냐하면 명령어에 /app/node_modules를 뺐으니까...
-  - 해당 라인을 추가하고 아래의 명령어를 실행하면 프로젝트가 실행되고 수정사항이 실시간 반영되는것을 확인할 수 있다. 
+  - 아래의 명령어를 실행하면 프로젝트가 실행되고 수정사항이 실시간 반영되는것을 확인할 수 있다. 
   ```
-  docker run -p 3000:3000 -v /app/node_modules  -v $(pwd):/app 17cf375c5bfcf60ce0baea05fee2bce85eb9b055d43104fe15c59068c8600276
+  docker run -p 3000:3000 -v /app/node_modules -v $(pwd):/app 17cf375c5bfcf60ce0baea05fee2bce85eb9b055d43104fe15c59068c8600276
   ```
 - Shorthand with Docker Compose
   - 하지만 명령어가 너무 길다. 
@@ -322,7 +325,7 @@
         - .:/app
   ```
   - docker-compose up을 해도 작동하지 않는다. 왜냐하면 현재 경로에 Dockerfile이 아닌 Dockerfile.dev 파일이 있기 때문이다.
-  - 그렇기 때문에 DOckerfile 대신 Dockerfile.dev 파일을 컴포즈할 방법을 찾아야 한다. 
+  - 그렇기 때문에 Dockerfile 대신 Dockerfile.dev 파일을 컴포즈할 방법을 찾아야 한다. 
 
 - Overriding Dockerfile Selection
   - context와 dockerfile을 build 아래에 추가한다.

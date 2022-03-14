@@ -1,5 +1,6 @@
 version: '3'
 services:
+ # web, tests는 컨테이너 이름
   web: 
     build:
       context: .
